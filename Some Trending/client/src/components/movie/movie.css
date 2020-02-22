@@ -1,0 +1,32 @@
+body {
+    background-color: darkgrey;
+}
+
+/* 달력 헤더 부분 */
+.react-calendar__navigation__label{
+    font-size: x-large;
+}
+
+/* 캘린더 크기 */
+.react-calendar {
+    width: 100%;
+}
+
+/* ul */
+.list-group {
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+/* li */
+.list-group-item:hover {
+    background-color: black;
+    color: palevioletred;
+    font-weight: 600;
+}
+
+.details {
+    background-color: white;
+    margin-top: 10px;
+    text-align: center;
+}

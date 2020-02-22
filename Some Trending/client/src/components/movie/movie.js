@@ -1,51 +1,59 @@
+/* module,library */
 import React , {Component} from 'react';
-import axios from 'axios'; 
+import moment from 'moment';
+import {connect} from 'react-redux';
+
+/* actions */
+import {ChangeDate, ShowDetailMovie} from '../../actions/index';
+
+/* components */
 import DatePicker from './date_picker';
+import MovieDetail from './movie_detail';
+
+/* css */
+import './movie.css';
 
 class Movie extends Component {
-    state = {
-        movie : [],
-        showRange : '',
-        firstDate : '20200220', 
+    componentDidMount = () =>{
+      const today = new Date();   
+      const changeToday = moment(today).subtract(1,'day').format('YYYYMMDD');
+      this.props.ChangeDate(changeToday);
     }
 
-    componentDidMount = async() =>{
-     this.callMovieList();
-    }
-
-    callMovieList = async() => {
-        await axios.get(`http://www.kobis.or.kr/kobisopenapi/webservice/rest/boxoffice/searchDailyBoxOfficeList.json?key=ff32a090cbc342f38a1ffdd2b6576e5e&targetDt=${this.state.firstDate}`)
-        .then(res => { this.setState({ 
-            movie : res.data.boxOfficeResult.dailyBoxOfficeList,
-            showRange : res.data.boxOfficeResult.showRange,
-         })});
-    }
-
-    onClickBtn = () => {
-        console.log(this.state.movie);
-    }
-
-    onClickDateBtn = () => {
-        console.log("hi");
+    onClickItem = e => {
+        this.props.ShowDetailMovie(this.props.selectDate,e.target.id-1);
     }
 
     render(){
-        const { movie, showRange } = this.state;
+        const { dailyMovieList,title } = this.props;
         return(
             <div>
-                <h1>날짜 : {showRange}</h1><br />
-                <DatePicker />
-                <ul className="list-group"> {movie ? movie.map((data) => {
-                    return (
-                        <li key={data.rank} className="list-group-item"> {data.rank}위 {data.movieNm} </li>          
-                    )
-                }) : ''} </ul>
-
-                <div> <button className="btn" onClick={this.onClickBtn}>확인</button> </div>
+                <div>
+                    <h1 className="bg-success"> {title} </h1>
+                    <h4 className="bg-warning"> 영화진흥위원회 API 특성상 하루전 데이터까지 받아옵니다. </h4>
+                </div>
+                <div className="row">
+                    <DatePicker />
+                    <ul className="col-md-4 list-group"> {dailyMovieList ? dailyMovieList.map((data) => {
+                        return (
+                            <li onClick={this.onClickItem} id={data.rank} key={data.rank} className="list-group-item"> {data.rank}위 {data.movieNm} </li>          
+                        )
+                    }) : ''} </ul>
+                    <div className="col-md-8 details">
+                        <MovieDetail/>
+                    </div>
+                </div>
             </div>
         )
     }
 }
 
+function mapStateToProps(state){
+    return { 
+        dailyMovieList : state.reducer.dailyMovieList,
+        title : state.reducer.title,
+        selectDate : state.reducer.selectDate
+    }
+}
 
-export default Movie;
+export default connect(mapStateToProps,{ChangeDate, ShowDetailMovie})(Movie);
