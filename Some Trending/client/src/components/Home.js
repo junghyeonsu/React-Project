@@ -7,6 +7,7 @@ class Home extends Component {
           <div>
             <div>Home</div>
             <Link to="/movie">일일 박스오피스 순위</Link><br />
+            <Link to="/melon">멜론차트</Link><br />
           </div>
         );
     }
